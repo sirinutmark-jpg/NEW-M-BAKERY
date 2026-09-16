@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="th" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M BAKERY - Creative Artisanal Bakery</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Prompt & Playfair Display -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Prompt:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        pastelOrange: '#FF9F43',
+                        peach: '#FFD1BA',
+                        creamYellow: '#FFF9F0',
+                        sunYellow: '#FFD966',
+                        darkBlack: '#1A1A1A',
+                        offWhite: '#FAF7F2'
+                    },
+                    fontFamily: {
+                        sans: ['Prompt', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #FFF9F0;
+            color: #1A1A1A;
+            overflow-x: hidden;
+        }
+        .brut-shadow {
+            box-shadow: 5px 5px 0px #1A1A1A;
+        }
+        .brut-shadow-lg {
+            box-shadow: 8px 8px 0px #1A1A1A;
+        }
+        .brut-shadow-sm {
+            box-shadow: 3px 3px 0px #1A1A1A;
+        }
+        .brut-card {
+            border: 3px solid #1A1A1A;
+            background: #FAF7F2;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .brut-card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow: 8px 8px 0px #1A1A1A;
+        }
+        .page-section {
+            display: none;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .page-section.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Custom Marquee Animation */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 22s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+        /* Floating abstract shapes */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(4deg); }
+        }
+        .floating {
+            animation: float 4s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="bg-creamYellow text-darkBlack selection:bg-pastelOrange selection:text-darkBlack flex flex-col min-h-screen">
+
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-offWhite border-b-4 border-darkBlack px-4 lg:px-12 py-4">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <!-- Brand Logo -->
+            <a href="#home" onclick="switchPage('home'); return false;" class="flex items-center gap-3 group">
+                <div class="w-12 h-12 bg-pastelOrange border-3 border-darkBlack rounded-xl flex items-center justify-center brut-shadow-sm group-hover:rotate-6 transition-transform">
+                    <i class="fa-solid fa-croissant text-2xl text-darkBlack"></i>
+                </div>
+                <div>
+                    <span class="text-2xl lg:text-3xl font-black tracking-tight uppercase font-serif">M BAKERY</span>
+                    <span class="block text-xs font-bold tracking-widest text-pastelOrange bg-darkBlack px-1 rounded -mt-1">MULTI-PAGE APP</span>
+                </div>
+            </a>
+
+            <!-- Desktop Nav Links (Reflecting 5 true pages) -->
+            <nav class="hidden md:flex items-center gap-2">
+                <a href="#home" onclick="switchPage('home'); return false;" id="nav-home" class="nav-btn px-4 py-2 font-bold rounded-lg border-2 border-transparent hover:border-darkBlack hover:bg-peach transition-all">🏠 หน้าแรก (index.html)</a>
+                <a href="#services" onclick="switchPage('services'); return false;" id="nav-services" class="nav-btn px-4 py-2 font-bold rounded-lg border-2 border-transparent hover:border-darkBlack hover:bg-peach transition-all">🥐 เมนู/บริการ (services.html)</a>
+                <a href="#work" onclick="switchPage('work'); return false;" id="nav-work" class="nav-btn px-4 py-2 font-bold rounded-lg border-2 border-transparent hover:border-darkBlack hover:bg-peach transition-all">🎨 ผลงาน (work.html)</a>
+                <a href="#process" onclick="switchPage('process'); return false;" id="nav-process" class="nav-btn px-4 py-2 font-bold rounded-lg border-2 border-transparent hover:border-darkBlack hover:bg-peach transition-all">🔥 เบื้องหลัง (process.html)</a>
+                <a href="#contact" onclick="switchPage('contact'); return false;" id="nav-contact" class="nav-btn px-4 py-2 font-bold rounded-lg border-2 border-transparent hover:border-darkBlack hover:bg-peach transition-all">📞 ติดต่อเรา (contact.html)</a>
+            </nav>
+
+            <!-- Quick Action & Mobile Toggle -->
+            <div class="flex items-center gap-3">
+                <button onclick="switchPage('contact')" class="hidden sm:inline-block bg-sunYellow border-3 border-darkBlack font-black px-5 py-2.5 rounded-xl brut-shadow hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none transition-all">
+                    สั่งซื้อขนม <i class="fa-solid fa-arrow-right ml-1"></i>
+                </button>
+                <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="md:hidden w-11 h-11 bg-peach border-3 border-darkBlack rounded-xl flex items-center justify-center brut-shadow-sm">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t-2 border-darkBlack flex flex-col gap-2">
+            <a href="#home" onclick="switchPage('home'); toggleMobileMenu(); return false;" class="px-4 py-2 font-bold rounded-lg hover:bg-peach">🏠 หน้าแรก (index.html)</a>
+            <a href="#services" onclick="switchPage('services'); toggleMobileMenu(); return false;" class="px-4 py-2 font-bold rounded-lg hover:bg-peach">🥐 เมนู/บริการ (services.html)</a>
+            <a href="#work" onclick="switchPage('work'); toggleMobileMenu(); return false;" class="px-4 py-2 font-bold rounded-lg hover:bg-peach">🎨 ผลงาน (work.html)</a>
+            <a href="#process" onclick="switchPage('process'); toggleMobileMenu(); return false;" class="px-4 py-2 font-bold rounded-lg hover:bg-peach">🔥 เบื้องหลัง (process.html)</a>
+            <a href="#contact" onclick="switchPage('contact'); toggleMobileMenu(); return false;" class="px-4 py-2 font-bold rounded-lg hover:bg-peach">📞 ติดต่อเรา (contact.html)</a>
+        </div>
+    </header>
+
+    <!-- Dynamic Marquee Bar -->
+    <div class="bg-darkBlack text-creamYellow py-3 overflow-hidden border-b-4 border-darkBlack font-black tracking-wider text-sm uppercase">
+        <div class="animate-marquee whitespace-nowrap flex gap-10">
+            <span>✨ FRESHLY BAKED DAILY WITH PASSION ✨</span>
+            <span>🥐 ARTISANAL CROISSANTS & SOURDOUGH 🥐</span>
+            <span>🎨 CREATIVE PASTRY & CUSTOM CAKES 🎨</span>
+            <span>🔥 TRUE MULTI-PAGE EXPERIENCE SIMULATION 🔥</span>
+            <span>✨ FRESHLY BAKED DAILY WITH PASSION ✨</span>
+            <span>🥐 ARTISANAL CROISSANTS & SOURDOUGH 🥐</span>
+            <span>🎨 CREATIVE PASTRY & CUSTOM CAKES 🎨</span>
+            <span>🔥 TRUE MULTI-PAGE EXPERIENCE SIMULATION 🔥</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT CONTAINER FOR MULTI-PAGE ARCHITECTURE -->
+    <main class="flex-grow">
+
+        <!-- ================= 1. INDEX.HTML (HOME) ================= -->
+        <section id="page-home" class="page-section py-8 lg:py-16 px-4 lg:px-12 max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
+                <div class="lg:col-span-7 flex flex-col gap-6">
+                    <div class="inline-flex items-center gap-2 bg-pastelOrange border-2 border-darkBlack px-4 py-1.5 rounded-full w-max brut-shadow-sm font-bold text-sm">
+                        <span class="w-3 h-3 bg-darkBlack rounded-full animate-pulse"></span>
+                        ยินดีต้อนรับสู่ index.html (หน้าแรก)
+                    </div>
+                    <h1 class="text-5xl lg:text-7xl font-black font-serif leading-tight">
+                        ARTISANAL <span class="bg-sunYellow px-2 border-2 border-darkBlack inline-block rotate-1">BAKERY</span> WITH A BOLD TWIST.
+                    </h1>
+                    <p class="text-lg lg:text-xl font-medium text-gray-800 leading-relaxed">
+                        สัมผัสประสบการณ์เบเกอรี่โฮมเมดสไตล์โมเดิร์น บรรจงอบสดใหม่ทุกวันด้วยเนยฝรั่งเศสแท้และวัตถุดิบพรีเมียมคัดสรรพิเศษ
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <button onclick="switchPage('services')" class="bg-pastelOrange border-3 border-darkBlack font-black px-8 py-4 rounded-xl brut-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all text-lg flex items-center gap-3">
+                            ดูเมนูทั้งหมด (services.html) <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        <button onclick="switchPage('work')" class="bg-offWhite border-3 border-darkBlack font-black px-8 py-4 rounded-xl brut-shadow hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all text-lg">
+                            ดูแกลเลอรี (work.html)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Hero Collage Visual -->
+                <div class="lg:col-span-5 relative flex justify-center">
+                    <div class="relative w-full max-w-md h-[420px]">
+                        <div class="absolute -top-6 -left-6 w-32 h-32 bg-sunYellow rounded-full border-3 border-darkBlack -z-10 floating"></div>
+                        <div class="absolute -bottom-6 -right-6 w-40 h-40 bg-pastelOrange rounded-2xl border-3 border-darkBlack -z-10 rotate-12"></div>
+                        
+                        <div class="absolute inset-0 brut-card rounded-2xl overflow-hidden p-3 flex flex-col justify-between rotate-2 shadow-2xl">
+                            <div class="h-64 rounded-xl overflow-hidden border-2 border-darkBlack relative">
+                                <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=800&q=80" alt="Bakery Hero" class="w-full h-full object-cover hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/FFB703/1A1A1A?text=M+Bakery+Signature'">
+                            </div>
+                            <div class="p-3 bg-sunYellow border-2 border-darkBlack rounded-xl flex items-center justify-between">
+                                <div>
+                                    <h4 class="font-black text-lg">Signature Croissant</h4>
+                                    <p class="text-xs font-bold text-gray-700">หอมกรุ่น เนยแท้จากฝรั่งเศส</p>
+                                </div>
+                                <span class="bg-darkBlack text-creamYellow font-black px-3 py-1.5 rounded-lg text-sm">฿120</span>
+                            </div>
+                        </div>
+
+                        <div class="absolute -bottom-4 -left-6 bg-peach border-3 border-darkBlack px-4 py-3 rounded-xl brut-shadow -rotate-6 z-20 flex items-center gap-2">
+                            <i class="fa-solid fa-star text-darkBlack"></i>
+                            <span class="font-black text-sm">Best Seller #1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Highlights Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
+                <div class="brut-card p-6 rounded-2xl flex items-start gap-4">
+                    <div class="w-14 h-14 bg-pastelOrange border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                        <i class="fa-solid fa-wheat-awn text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black mb-1">100% พรีเมียมออร์แกนิก</h3>
+                        <p class="text-sm text-gray-700 font-medium">แป้งไม่ฟอกขาว เนยแท้ไขมัน 82% และดาร์กช็อกโกแลตแท้ระดับโลก</p>
+                    </div>
+                </div>
+
+                <div class="brut-card p-6 rounded-2xl flex items-start gap-4">
+                    <div class="w-14 h-14 bg-sunYellow border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                        <i class="fa-solid fa-fire-burner text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black mb-1">อบสดใหม่ทุกเตา</h3>
+                        <p class="text-sm text-gray-700 font-medium">อบสดวันต่อวันรอบเช้าและรอบบ่าย ไร้สารกันบูด ปลอดภัยทุกคำ</p>
+                    </div>
+                </div>
+
+                <div class="brut-card p-6 rounded-2xl flex items-start gap-4">
+                    <div class="w-14 h-14 bg-peach border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                        <i class="fa-solid fa-palette text-2xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black mb-1">ดีไซน์สร้างสรรค์</h3>
+                        <p class="text-sm text-gray-700 font-medium">ผสานความอร่อยกับดีไซน์สไตล์ Neo-Brutalist ที่มีเอกลักษณ์และน่าจดจำ</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Items Preview -->
+            <div class="mb-20">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                    <div>
+                        <span class="bg-darkBlack text-creamYellow px-3 py-1 rounded font-bold text-xs uppercase tracking-wider">FEATURED BAKES</span>
+                        <h2 class="text-4xl lg:text-5xl font-black font-serif mt-2">เมนูยอดฮิตประจำร้าน</h2>
+                    </div>
+                    <button onclick="switchPage('services')" class="bg-pastelOrange border-3 border-darkBlack font-black px-6 py-3 rounded-xl brut-shadow hover:translate-x-0.5 hover:translate-y-0.5 transition-all w-max">
+                        ไปยังหน้า services.html <i class="fa-solid fa-arrow-right ml-1"></i>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="brut-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="h-64 overflow-hidden border-b-3 border-darkBlack relative">
+                            <img src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?auto=format&fit=crop&w=600&q=80" alt="Almond Croissant" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/500x350/FFD1BA/1A1A1A?text=Almond+Croissant'">
+                            <span class="absolute top-3 left-3 bg-sunYellow border-2 border-darkBlack font-black px-3 py-1 rounded-lg text-xs">ขายดี</span>
+                        </div>
+                        <div class="p-6 flex flex-col gap-3">
+                            <h3 class="text-2xl font-black font-serif">Almond Butter Croissant</h3>
+                            <p class="text-sm font-medium text-gray-700">ครัวซองต์กรอบนอกนุ่มใน สอดไส้อัลมอนด์ครีมเข้มข้น หอมเนยแท้</p>
+                            <div class="flex items-center justify-between pt-2 border-t-2 border-dashed border-darkBlack">
+                                <span class="text-xl font-black text-darkBlack">฿140</span>
+                                <button onclick="switchPage('contact')" class="bg-darkBlack text-creamYellow px-4 py-2 rounded-xl font-bold text-sm hover:bg-pastelOrange hover:text-darkBlack transition-colors border-2 border-darkBlack">สั่งซื้อ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="brut-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="h-64 overflow-hidden border-b-3 border-darkBlack relative">
+                            <img src="https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=600&q=80" alt="Brownie" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/500x350/FF9F43/1A1A1A?text=Fudge+Brownie'">
+                            <span class="absolute top-3 left-3 bg-pastelOrange border-2 border-darkBlack font-black px-3 py-1 rounded-lg text-xs">พรีเมียม</span>
+                        </div>
+                        <div class="p-6 flex flex-col gap-3">
+                            <h3 class="text-2xl font-black font-serif">Double Choc Fudge Brownie</h3>
+                            <p class="text-sm font-medium text-gray-700">บราวนี่เนื้อหนึบหนับ ช็อกโกแลตแท้เข้มข้น แต่งหน้าด้วยเกลือทะเล</p>
+                            <div class="flex items-center justify-between pt-2 border-t-2 border-dashed border-darkBlack">
+                                <span class="text-xl font-black text-darkBlack">฿95</span>
+                                <button onclick="switchPage('contact')" class="bg-darkBlack text-creamYellow px-4 py-2 rounded-xl font-bold text-sm hover:bg-pastelOrange hover:text-darkBlack transition-colors border-2 border-darkBlack">สั่งซื้อ</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="brut-card rounded-2xl overflow-hidden flex flex-col justify-between">
+                        <div class="h-64 overflow-hidden border-b-3 border-darkBlack relative">
+                            <img src="https://images.unsplash.com/photo-1587314168485-3236d6710814?auto=format&fit=crop&w=600&q=80" alt="Sourdough" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300" onerror="this.src='https://placehold.co/500x350/FFF9F0/1A1A1A?text=Sourdough'">
+                            <span class="absolute top-3 left-3 bg-peach border-2 border-darkBlack font-black px-3 py-1 rounded-lg text-xs">ธรรมชาติ 100%</span>
+                        </div>
+                        <div class="p-6 flex flex-col gap-3">
+                            <h3 class="text-2xl font-black font-serif">Rustic Country Sourdough</h3>
+                            <p class="text-sm font-medium text-gray-700">ขนมปังซาวโดว์หมักธรรมชาติ กรอบนอกนุ่มหนึบ ย่อยง่าย ดีต่อสุขภาพ</p>
+                            <div class="flex items-center justify-between pt-2 border-t-2 border-dashed border-darkBlack">
+                                <span class="text-xl font-black text-darkBlack">฿180</span>
+                                <button onclick="switchPage('contact')" class="bg-darkBlack text-creamYellow px-4 py-2 rounded-xl font-bold text-sm hover:bg-pastelOrange hover:text-darkBlack transition-colors border-2 border-darkBlack">สั่งซื้อ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 2. SERVICES.HTML (SERVICES) ================= -->
+        <section id="page-services" class="page-section py-8 lg:py-16 px-4 lg:px-12 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="bg-pastelOrange border-2 border-darkBlack px-4 py-1 rounded-full font-bold text-xs uppercase tracking-wider brut-shadow-sm">SERVICES.HTML</span>
+                <h1 class="text-4xl lg:text-6xl font-black font-serif mt-3 mb-4">เมนูและบริการของเรา</h1>
+                <p class="text-lg font-medium text-gray-800">เลือกสรรความอร่อยที่หลากหลาย ตอบโจทย์ทุกไลฟ์สไตล์ ทั้งเบเกอรี่ทานเล่น เค้กวันเกิด และบริการจัดเลี้ยง</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+                <div class="brut-card rounded-3xl p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="w-16 h-16 bg-sunYellow border-3 border-darkBlack rounded-2xl flex items-center justify-center brut-shadow-sm mb-6">
+                            <i class="fa-solid fa-croissant text-3xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-black font-serif mb-3">Artisanal Viennoiserie</h3>
+                        <p class="text-gray-700 font-medium mb-6">ครัวซองต์ เดนิช และพาสทรีอบสดใหม่ทุกเช้า หอมเนยแท้ชวนหลงใหล กรอบฟูทุกคำ</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Plain Butter Croissant</span>
+                                <span class="bg-pastelOrange px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿110</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Almond Cream Croissant</span>
+                                <span class="bg-pastelOrange px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿140</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Pain au Chocolat</span>
+                                <span class="bg-pastelOrange px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿130</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold">
+                                <span>Strawberry Danish</span>
+                                <span class="bg-pastelOrange px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿150</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="switchPage('contact')" class="w-full bg-darkBlack text-creamYellow font-black py-3 rounded-xl border-2 border-darkBlack hover:bg-sunYellow hover:text-darkBlack transition-all">
+                        สั่งซื้อหมวดหมู่นี้
+                    </button>
+                </div>
+
+                <div class="brut-card rounded-3xl p-8 flex flex-col justify-between">
+                    <div>
+                        <div class="w-16 h-16 bg-peach border-3 border-darkBlack rounded-2xl flex items-center justify-center brut-shadow-sm mb-6">
+                            <i class="fa-solid fa-cake-candles text-3xl"></i>
+                        </div>
+                        <h3 class="text-3xl font-black font-serif mb-3">Custom Celebration Cakes</h3>
+                        <p class="text-gray-700 font-medium mb-6">เค้กวันเกิด เค้กวันสำคัญ และเค้กดีไซน์เฉพาะตัว ออกแบบได้ตามใจคุณ อร่อยละมุน ไม่เลี่ยน</p>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Classic Vanilla Fresh Cream Cake</span>
+                                <span class="bg-peach px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿650+</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Dark Chocolate Ganache Cake</span>
+                                <span class="bg-peach px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿750+</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold border-b border-gray-300 pb-2">
+                                <span>Matcha Nama Cake</span>
+                                <span class="bg-peach px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿800+</span>
+                            </li>
+                            <li class="flex items-center justify-between font-bold">
+                                <span>Custom Bento Cake (มินิมอล)</span>
+                                <span class="bg-peach px-2.5 py-1 rounded border-2 border-darkBlack text-sm">฿390+</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <button onclick="switchPage('contact')" class="w-full bg-darkBlack text-creamYellow font-black py-3 rounded-xl border-2 border-darkBlack hover:bg-peach hover:text-darkBlack transition-all">
+                        สั่งทำเค้กพิเศษ
+                    </button>
+                </div>
+            </div>
+
+            <!-- Additional Services Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-sunYellow border-3 border-darkBlack rounded-2xl p-6 brut-shadow">
+                    <div class="text-2xl font-black mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-mug-hot"></i> Coffee Breaks
+                    </div>
+                    <p class="text-sm font-medium text-gray-800">บริการจัดเบรกประชุมสัมมนา กาแฟสดและเบเกอรี่ชิ้นพอดีคำ จัดส่งตรงเวลา</p>
+                </div>
+                <div class="bg-pastelOrange border-3 border-darkBlack rounded-2xl p-6 brut-shadow">
+                    <div class="text-2xl font-black mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-gift"></i> Gift Boxes
+                    </div>
+                    <p class="text-sm font-medium text-gray-800">ชุดของขวัญพรีเมียมสำหรับเทศกาลปีใหม่ วาเลนไทน์ หรือแสดงความยินดี</p>
+                </div>
+                <div class="bg-peach border-3 border-darkBlack rounded-2xl p-6 brut-shadow">
+                    <div class="text-2xl font-black mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-graduation-cap"></i> Baking Class
+                    </div>
+                    <p class="text-sm font-medium text-gray-800">เวิร์กชอปสอนทำเบเกอรี่พื้นฐานและเทคนิคขั้นสูงโดยเชฟมากประสบการณ์</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 3. WORK.HTML (WORK / GALLERY) ================= -->
+        <section id="page-work" class="page-section py-8 lg:py-16 px-4 lg:px-12 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="bg-sunYellow border-2 border-darkBlack px-4 py-1 rounded-full font-bold text-xs uppercase tracking-wider brut-shadow-sm">WORK.HTML</span>
+                <h1 class="text-4xl lg:text-6xl font-black font-serif mt-3 mb-4">ผลงานและแกลเลอรี</h1>
+                <p class="text-lg font-medium text-gray-800">รวมภาพความอร่อย ผลงานการรังสรรค์เบเกอรี่ และเค้กในโอกาสพิเศษต่างๆ ของ M Bakery</p>
+            </div>
+
+            <!-- Creative Collage Gallery Layout -->
+            <div class="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-16">
+                <div class="md:col-span-2 lg:col-span-3 brut-card rounded-2xl overflow-hidden group">
+                    <div class="h-80 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80" alt="Artisanal Breads" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/FF9F43/1A1A1A?text=Artisanal+Breads'">
+                        <div class="absolute inset-0 bg-darkBlack/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                            <span class="bg-sunYellow text-darkBlack font-black px-3 py-1 rounded-lg text-sm">Artisanal Sourdough Display</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 lg:col-span-3 brut-card rounded-2xl overflow-hidden group">
+                    <div class="h-80 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1535141192574-5d4897c13136?auto=format&fit=crop&w=800&q=80" alt="Pastry Assortment" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/600x400/FFD1BA/1A1A1A?text=Pastry+Assortment'">
+                        <div class="absolute inset-0 bg-darkBlack/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-6">
+                            <span class="bg-pastelOrange text-darkBlack font-black px-3 py-1 rounded-lg text-sm">Morning Croissants</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 lg:col-span-2 brut-card rounded-2xl overflow-hidden group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80" alt="Celebration Cake" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x300/FFF9F0/1A1A1A?text=Celebration+Cake'">
+                        <div class="absolute inset-0 bg-darkBlack/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <span class="bg-peach text-darkBlack font-black px-2 py-1 rounded text-xs">Custom Birthday Cake</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 lg:col-span-2 brut-card rounded-2xl overflow-hidden group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1621236378690-e593d67264d7?auto=format&fit=crop&w=600&q=80" alt="Fruit Tart" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x300/FFD966/1A1A1A?text=Fruit+Tart'">
+                        <div class="absolute inset-0 bg-darkBlack/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <span class="bg-sunYellow text-darkBlack font-black px-2 py-1 rounded text-xs">Fresh Fruit Tart</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="md:col-span-2 lg:col-span-2 brut-card rounded-2xl overflow-hidden group">
+                    <div class="h-64 overflow-hidden relative">
+                        <img src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?auto=format&fit=crop&w=600&q=80" alt="Macarons" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" onerror="this.src='https://placehold.co/400x300/FF9F43/1A1A1A?text=Macarons'">
+                        <div class="absolute inset-0 bg-darkBlack/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                            <span class="bg-pastelOrange text-darkBlack font-black px-2 py-1 rounded text-xs">French Macarons</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Customer Reviews Testimonials -->
+            <div class="bg-creamYellow border-4 border-darkBlack rounded-3xl p-8 lg:p-12 brut-shadow-lg">
+                <h2 class="text-3xl lg:text-4xl font-black font-serif text-center mb-10">เสียงตอบรับจากลูกค้าคนสำคัญ</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="brut-card p-6 rounded-2xl bg-offWhite">
+                        <div class="flex items-center gap-1 text-sunYellow mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 mb-4">"ครัวซองต์อัลมอนด์อร่อยที่สุดเท่าที่เคยทานมา กรอบ หอมเนย ไส้ไม่หวานเลี่ยน พนักงานบริการดีมากครับ"</p>
+                        <span class="font-bold text-xs bg-pastelOrange px-2 py-1 rounded border border-darkBlack">คุณธน ภ.</span>
+                    </div>
+                    <div class="brut-card p-6 rounded-2xl bg-offWhite">
+                        <div class="flex items-center gap-1 text-sunYellow mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 mb-4">"สั่งเค้กวันเกิดให้ลูกสาว สวยงามตรงปก รสชาติดีมาก ทุกคนในงานชมไม่ขาดปากเลยค่ะ รอบหน้าสั่งอีกแน่นอน"</p>
+                        <span class="font-bold text-xs bg-peach px-2 py-1 rounded border border-darkBlack">คุณพิมพ์ชนก ส.</span>
+                    </div>
+                    <div class="brut-card p-6 rounded-2xl bg-offWhite">
+                        <div class="flex items-center gap-1 text-sunYellow mb-3">
+                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                        </div>
+                        <p class="text-sm font-medium text-gray-800 mb-4">"ซาวโดว์ของ M Bakery ดีต่อสุขภาพและรสชาติดีเยี่ยม ทานคู่กับสลัดตอนเช้าคือฟินมาก"</p>
+                        <span class="font-bold text-xs bg-sunYellow px-2 py-1 rounded border border-darkBlack">คุณอเล็กซ์ ดับเบิลยู.</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 4. PROCESS.HTML (PROCESS) ================= -->
+        <section id="page-process" class="page-section py-8 lg:py-16 px-4 lg:px-12 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="bg-peach border-2 border-darkBlack px-4 py-1 rounded-full font-bold text-xs uppercase tracking-wider brut-shadow-sm">PROCESS.HTML</span>
+                <h1 class="text-4xl lg:text-6xl font-black font-serif mt-3 mb-4">เบื้องหลังความอร่อยของเรา</h1>
+                <p class="text-lg font-medium text-gray-800">กว่าจะมาเป็นเบเกอรี่ชิ้นพรีเมียมแต่ละชิ้น เราใส่ใจในทุกขั้นตอนการผลิตด้วยความพิถีพิถัน</p>
+            </div>
+
+            <!-- Steps Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+                <div class="brut-card rounded-2xl p-6 relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-pastelOrange border-3 border-darkBlack rounded-xl flex items-center justify-center font-black text-xl mb-4 brut-shadow-sm">
+                            01
+                        </div>
+                        <h3 class="text-2xl font-black font-serif mb-2">Selected Ingredients</h3>
+                        <p class="text-sm text-gray-700 font-medium">คัดสรรวัตถุดิบชั้นเลิศ เนยแท้ไขมัน 82% แป้งนำเข้า และผลไม้สดตามฤดูกาล ปราศจากสารกันบูด</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t-2 border-dashed border-darkBlack text-xs font-bold text-pastelOrange bg-darkBlack px-2.5 py-1 rounded w-max">
+                        Quality Control
+                    </div>
+                </div>
+
+                <div class="brut-card rounded-2xl p-6 relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-sunYellow border-3 border-darkBlack rounded-xl flex items-center justify-center font-black text-xl mb-4 brut-shadow-sm">
+                            02
+                        </div>
+                        <h3 class="text-2xl font-black font-serif mb-2">Artisanal Kneading</h3>
+                        <p class="text-sm text-gray-700 font-medium">กระบวนการนวดแป้งด้วยความใส่ใจ ควบคุมอุณหภูมิและเวลาในการหมักยีสต์ธรรมชาติให้ได้เนื้อสัมผัสที่ดีที่สุด</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t-2 border-dashed border-darkBlack text-xs font-bold text-darkBlack bg-sunYellow px-2.5 py-1 rounded w-max">
+                        Precise Timing
+                    </div>
+                </div>
+
+                <div class="brut-card rounded-2xl p-6 relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-peach border-3 border-darkBlack rounded-xl flex items-center justify-center font-black text-xl mb-4 brut-shadow-sm">
+                            03
+                        </div>
+                        <h3 class="text-2xl font-black font-serif mb-2">Fresh Baking</h3>
+                        <p class="text-sm text-gray-700 font-medium">อบสดใหม่ในเตาอบควบคุมความร้อนแม่นยำ เพื่อให้ได้เปลือกที่กรอบนอกนุ่มในและกลิ่นหอมฟุ้งกระจาย</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t-2 border-dashed border-darkBlack text-xs font-bold text-darkBlack bg-peach px-2.5 py-1 rounded w-max">
+                        Oven Fresh
+                    </div>
+                </div>
+
+                <div class="brut-card rounded-2xl p-6 relative flex flex-col justify-between">
+                    <div>
+                        <div class="w-12 h-12 bg-pastelOrange border-3 border-darkBlack rounded-xl flex items-center justify-center font-black text-xl mb-4 brut-shadow-sm">
+                            04
+                        </div>
+                        <h3 class="text-2xl font-black font-serif mb-2">Quality Check</h3>
+                        <p class="text-sm text-gray-700 font-medium">ตรวจสอบความสมบูรณ์และบรรจุลงในบรรจุภัณฑ์ที่รักษาความสดใหม่ พร้อมเสิร์ฟถึงมือคุณทุกวัน</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t-2 border-dashed border-darkBlack text-xs font-bold text-creamYellow bg-darkBlack px-2.5 py-1 rounded w-max">
+                        Ready to Serve
+                    </div>
+                </div>
+            </div>
+
+            <!-- Master Baker Banner -->
+            <div class="bg-sunYellow border-4 border-darkBlack rounded-3xl p-8 lg:p-12 brut-shadow-lg grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-5 h-80 rounded-2xl overflow-hidden border-3 border-darkBlack">
+                    <img src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=600&q=80" alt="Master Baker" class="w-full h-full object-cover" onerror="this.src='https://placehold.co/500x500/FF9F43/1A1A1A?text=Master+Baker'">
+                </div>
+                <div class="lg:col-span-7 flex flex-col gap-4">
+                    <span class="bg-darkBlack text-creamYellow px-3 py-1 rounded font-bold text-xs uppercase w-max">HEAD CHEF & FOUNDER</span>
+                    <h2 class="text-3xl lg:text-4xl font-black font-serif">"เราไม่ได้แค่ทำขนมปัง แต่เราส่งมอบความสุขในทุกคำที่กัด"</h2>
+                    <p class="font-medium text-gray-900">เชฟมานัส (Chef Manat) ผู้เชี่ยวชาญด้านเบเกอรี่ฝรั่งเศส มุ่งมั่นนำวัตถุดิบคุณภาพสูงมาผสานกับความคิดสร้างสรรค์อันสดใส เพื่อให้ทุกวันของคุณมีความหมายยิ่งขึ้น</p>
+                    <div class="pt-2">
+                        <button onclick="switchPage('contact')" class="bg-darkBlack text-creamYellow border-3 border-darkBlack font-black px-6 py-3 rounded-xl brut-shadow hover:bg-pastelOrange hover:text-darkBlack transition-all">
+                            ติดต่อสอบถามเพิ่มเติม
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= 5. CONTACT.HTML (CONTACT) ================= -->
+        <section id="page-contact" class="page-section py-8 lg:py-16 px-4 lg:px-12 max-w-7xl mx-auto">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <span class="bg-pastelOrange border-2 border-darkBlack px-4 py-1 rounded-full font-bold text-xs uppercase tracking-wider brut-shadow-sm">CONTACT.HTML</span>
+                <h1 class="text-4xl lg:text-6xl font-black font-serif mt-3 mb-4">ติดต่อเรา / สั่งซื้อขนม</h1>
+                <p class="text-lg font-medium text-gray-800">แวะมาเยี่ยมเยียนสาขาของเรา หรือส่งข้อความสั่งซื้อขนม/จองคิวเค้กได้ตลอดเวลา</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
+                <div class="lg:col-span-7 brut-card rounded-3xl p-8 lg:p-10">
+                    <h3 class="text-3xl font-black font-serif mb-6">ส่งข้อความถึงเรา</h3>
+                    <form onsubmit="handleFormSubmit(event)" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block font-black text-sm mb-2">ชื่อ - นามสกุล *</label>
+                                <input type="text" required placeholder="เช่น สมชาย ใจดี" class="w-full bg-offWhite border-3 border-darkBlack rounded-xl px-4 py-3 font-medium focus:outline-none focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block font-black text-sm mb-2">เบอร์โทรศัพท์ *</label>
+                                <input type="tel" required placeholder="089-123-4567" class="w-full bg-offWhite border-3 border-darkBlack rounded-xl px-4 py-3 font-medium focus:outline-none focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block font-black text-sm mb-2">ประเภทความต้องการ *</label>
+                            <select class="w-full bg-offWhite border-3 border-darkBlack rounded-xl px-4 py-3 font-medium focus:outline-none focus:bg-white">
+                                <option>สั่งซื้อเบเกอรี่เดลิเวอรี / รับหน้าร้าน</option>
+                                <option>สั่งทำเค้กวันเกิด / เค้กพิเศษ</option>
+                                <option>จัดเลี้ยง Coffee Break / Catering</option>
+                                <option>สอบถามข้อมูลเวิร์กชอป</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label class="block font-black text-sm mb-2">ข้อความ / รายละเอียดเพิ่มเติม *</label>
+                            <textarea required rows="4" placeholder="ระบุรายการขนม จำนวน หรือวันที่ต้องการรับสินค้า..." class="w-full bg-offWhite border-3 border-darkBlack rounded-xl px-4 py-3 font-medium focus:outline-none focus:bg-white"></textarea>
+                        </div>
+
+                        <button type="submit" class="w-full bg-sunYellow border-3 border-darkBlack font-black py-4 rounded-xl brut-shadow hover:bg-pastelOrange transition-all text-lg flex items-center justify-center gap-2">
+                            ส่งข้อความ / สั่งซื้อสินค้า <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-5 flex flex-col gap-6">
+                    <div class="brut-card rounded-3xl p-8 bg-offWhite flex flex-col gap-6">
+                        <h3 class="text-2xl font-black font-serif">ข้อมูลร้าน M Bakery</h3>
+                        
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-pastelOrange border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                                <i class="fa-solid fa-location-dot text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg">ที่ตั้งสาขาหลัก</h4>
+                                <p class="text-sm text-gray-700 font-medium">99/8 ถนนสุขุมวิท แขวงคลองเตย เขตคลองเตย กรุงเทพฯ 10110</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-sunYellow border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                                <i class="fa-solid fa-clock text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg">เวลาทำการ</h4>
+                                <p class="text-sm text-gray-700 font-medium">เปิดทุกวัน: 07:00 น. - 19:00 น.</p>
+                                <p class="text-xs font-bold text-pastelOrange bg-darkBlack px-2 py-0.5 rounded w-max mt-1">อบสดรอบแรก 07:30 น.</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-4">
+                            <div class="w-12 h-12 bg-peach border-3 border-darkBlack rounded-xl flex items-center justify-center shrink-0 brut-shadow-sm">
+                                <i class="fa-solid fa-phone text-xl"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg">เบอร์โทรศัพท์ & โซเชียล</h4>
+                                <p class="text-sm text-gray-700 font-medium">Tel: 02-123-4567, 089-999-8888</p>
+                                <p class="text-sm text-gray-700 font-medium">Line: @mbakery</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-darkBlack text-creamYellow border-3 border-darkBlack rounded-3xl p-6 brut-shadow flex items-center justify-around">
+                        <a href="#" class="w-12 h-12 bg-pastelOrange text-darkBlack border-2 border-creamYellow rounded-xl flex items-center justify-center text-xl hover:scale-110 transition-transform"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="#" class="w-12 h-12 bg-sunYellow text-darkBlack border-2 border-creamYellow rounded-xl flex items-center justify-center text-xl hover:scale-110 transition-transform"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="#" class="w-12 h-12 bg-peach text-darkBlack border-2 border-creamYellow rounded-xl flex items-center justify-center text-xl hover:scale-110 transition-transform"><i class="fa-brands fa-tiktok"></i></a>
+                        <a href="#" class="w-12 h-12 bg-offWhite text-darkBlack border-2 border-creamYellow rounded-xl flex items-center justify-center text-xl hover:scale-110 transition-transform"><i class="fa-brands fa-line"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer Section -->
+    <footer class="bg-darkBlack text-creamYellow border-t-4 border-darkBlack mt-auto py-12 px-4 lg:px-12">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="flex flex-col gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-pastelOrange border-2 border-creamYellow rounded-lg flex items-center justify-center">
+                        <i class="fa-solid fa-croissant text-darkBlack"></i>
+                    </div>
+                    <span class="text-2xl font-black font-serif tracking-tight">M BAKERY</span>
+                </div>
+                <p class="text-sm text-gray-400 font-medium">เบเกอรี่โฮมเมดสไตล์โมเดิร์น อบสดใหม่ด้วยหัวใจและความคิดสร้างสรรค์ทุกวัน</p>
+            </div>
+
+            <div>
+                <h4 class="font-black text-lg mb-4 text-sunYellow">หน้าเว็บไซต์ทั้งหมด</h4>
+                <ul class="space-y-2 text-sm font-medium">
+                    <li><a href="#home" onclick="switchPage('home'); return false;" class="hover:text-pastelOrange transition-colors">🏠 index.html (หน้าแรก)</a></li>
+                    <li><a href="#services" onclick="switchPage('services'); return false;" class="hover:text-pastelOrange transition-colors">🥐 services.html (เมนูและบริการ)</a></li>
+                    <li><a href="#work" onclick="switchPage('work'); return false;" class="hover:text-pastelOrange transition-colors">🎨 work.html (ผลงานแกลเลอรี)</a></li>
+                    <li><a href="#process" onclick="switchPage('process'); return false;" class="hover:text-pastelOrange transition-colors">🔥 process.html (เบื้องหลัง)</a></li>
+                    <li><a href="#contact" onclick="switchPage('contact'); return false;" class="hover:text-pastelOrange transition-colors">📞 contact.html (ติดต่อเรา)</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-black text-lg mb-4 text-sunYellow">หมวดหมู่ยอดนิยม</h4>
+                <ul class="space-y-2 text-sm font-medium text-gray-300">
+                    <li>ครัวซองต์เนยสดฝรั่งเศส</li>
+                    <li>เค้กวันเกิดและเค้กมินิมอล</li>
+                    <li>ซาวโดว์ธรรมชาติ</li>
+                    <li>จัดเบรกสัมมนาและCatering</li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-black text-lg mb-4 text-sunYellow">จดหมายข่าว</h4>
+                <p class="text-sm text-gray-400 mb-3 font-medium">รับข่าวสารเมนูใหม่และโปรโมชั่นพิเศษก่อนใคร</p>
+                <div class="flex gap-2">
+                    <input type="email" placeholder="อีเมลของคุณ..." class="bg-gray-800 border-2 border-creamYellow px-3 py-2 rounded-xl text-sm text-white w-full focus:outline-none">
+                    <button onclick="alertBox('สมัครรับข่าวสารสำเร็จแล้ว!')" class="bg-sunYellow text-darkBlack font-black px-4 py-2 rounded-xl border-2 border-creamYellow hover:bg-pastelOrange transition-colors">สมัคร</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto pt-8 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-400 font-medium">
+            <p>&copy; 2026 M BAKERY. All rights reserved. Creative Artisanal Bakery Multi-Page Structure.</p>
+            <div class="flex gap-4 mt-4 sm:mt-0">
+                <a href="#" class="hover:text-creamYellow">นโยบายความเป็นส่วนตัว</a>
+                <a href="#" class="hover:text-creamYellow">เงื่อนไขการให้บริการ</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Custom Modal Message Box -->
+    <div id="custom-modal" class="fixed inset-0 bg-darkBlack/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-offWhite border-4 border-darkBlack rounded-3xl p-8 max-w-md w-full brut-shadow-lg text-center">
+            <div class="w-16 h-16 bg-sunYellow border-3 border-darkBlack rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl brut-shadow-sm">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <h3 id="modal-title" class="text-2xl font-black font-serif mb-2">สำเร็จ!</h3>
+            <p id="modal-message" class="text-gray-700 font-medium mb-6">ข้อความของคุณถูกส่งเรียบร้อยแล้ว เราจะติดต่อกลับโดยเร็วที่สุด</p>
+            <button onclick="closeModal()" class="w-full bg-darkBlack text-creamYellow font-black py-3 rounded-xl border-2 border-darkBlack hover:bg-pastelOrange hover:text-darkBlack transition-all">
+                ตกลง
+            </button>
+        </div>
+    </div>
+
+    <!-- Multi-Page Routing & Interaction Script -->
+    <script>
+        function switchPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page-section');
+            pages.forEach(p => p.classList.remove('active'));
+
+            // Show target page
+            const target = document.getElementById('page-' + pageId);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Update active nav button state
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(btn => {
+                btn.classList.remove('bg-pastelOrange', 'border-darkBlack', 'text-darkBlack');
+            });
+            const activeBtn = document.getElementById('nav-' + pageId);
+            if (activeBtn) {
+                activeBtn.classList.add('bg-pastelOrange', 'border-darkBlack');
+            }
+
+            // Update URL hash without jumping
+            history.pushState(null, null, '#' + pageId);
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        }
+
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            document.getElementById('modal-title').innerText = 'ส่งข้อมูลสำเร็จ!';
+            document.getElementById('modal-message').innerText = 'ขอบคุณที่ติดต่อ M Bakery ทีมงานจะติดต่อกลับและเตรียมความอร่อยส่งตรงถึงคุณทันทีค่ะ';
+            document.getElementById('custom-modal').classList.remove('hidden');
+            event.target.reset();
+        }
+
+        function alertBox(msg) {
+            document.getElementById('modal-title').innerText = 'แจ้งเตือน';
+            document.getElementById('modal-message').innerText = msg;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // Handle initial page load based on URL hash or default to home
+        window.addEventListener('DOMContentLoaded', () => {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && document.getElementById('page-' + hash)) {
+                switchPage(hash);
+            } else {
+                switchPage('home');
+            }
+        });
+
+        // Handle browser back/forward buttons
+        window.addEventListener('popstate', () => {
+            const hash = window.location.hash.replace('#', '') || 'home';
+            if (document.getElementById('page-' + hash)) {
+                switchPage(hash);
+            }
+        });
+    </script>
+</body>
+</html>
